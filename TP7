@@ -1,0 +1,74 @@
+import random
+
+COLORS = ["R", "G", "B", "Y", "P", "W"]
+CODE_LENGTH = 3
+MAX_TRIES = 12
+
+
+def generer_code():
+    code = []
+
+    for i in range(CODE_LENGTH):
+        couleur = random.choice(COLORS)
+        code.append(couleur)
+
+    return code
+
+
+def demander_proposition():
+    proposition = input("Entrez votre proposition en MAJUSCULES : ")
+
+    while len(proposition) != CODE_LENGTH:
+        print("Il faut entrer", CODE_LENGTH)        # dans cette fonction je vérifie 2 choses : que le code est de 4 lettres et que les lettre sont dans la liste 
+        proposition = input("Entrez votre proposition en MAJUSCULES : ")
+
+    while not proposition_valide(proposition):
+        print("Couleur invalide.")
+        proposition = input("Entrez votre proposition en MAJUSCULES : ")
+
+    return proposition
+
+def proposition_valide(proposition):      #une personne peut entrer RXYZ, donc je m'assure que c'est bien parmis la liste 
+    for couleur in proposition:
+        if couleur not in COLORS:
+            return False
+
+    return True
+
+
+def comparer_proposition(secret, proposition):
+    correct = 0
+    partiel = 0
+
+    secret_restant = []
+    proposition_restant = []
+
+    for i in range(CODE_LENGTH):
+        if secret[i] == proposition[i]: # je compare la position dans le secret et la proposition
+            correct = correct + 1
+        else:
+            secret_restant.append(secret[i])
+            proposition_restant.append(proposition[i])
+
+    for couleur in proposition_restant:
+        if couleur in secret_restant:
+            partiel = partiel + 1
+            secret_restant.remove(couleur) #pour que je la compte pas une 2eme fois
+
+    return correct, partiel
+
+def jouer_partie():
+    secret = generer_code()
+    #print("Code secret :", secret)
+    nombre_essais = 0
+
+    while nombre_essais < MAX_TRIES:
+        proposition = demander_proposition()
+        nombre_essais = nombre_essais + 1
+        correct, partiel = comparer_proposition(secret, proposition)
+        print("Correct :", correct)
+        print("Partiel :", partiel)
+        essais_restants = MAX_TRIES - nombre_essais
+        print("Essais restants :", essais_restants)
+
+jouer_partie()
